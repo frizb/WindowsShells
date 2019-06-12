@@ -84,6 +84,20 @@ WMIImplant is another Powerful tool that can be leveraged in this situation:
 ```
 git clone https://github.com/FortyNorthSecurity/WMImplant
 ```
+WMI Impant provides an interactive menu interface when you run Invoke-WMImplant:
+```
+Import-module WMImplant.ps1
+Invoke-WMImplant
+```
+To run WMImplant against a remote machine you can use the following Syntax:
+```
+Invoke-WMImplant -ActiveUsers -ComputerName victim9 -RemoteUser .\Administrator -RemotePass badpass
+```
+Get a list of commands:
+```
+Invoke-WMImplant -ListCommands
+```
+
 
 ## PowerShell Remoting
 PowerShell only works if the remote machine already has PowerShell installed and if PowerShell remoting is configured to allow remote access. 
