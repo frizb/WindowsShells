@@ -52,5 +52,52 @@ COMPUTERNAME2
 COMPUTERNAME3
 ```
 
+### Starting a Remote Shell with PowerShell Remoting
 
-PSEXEC
+Both the client and server machine must have PowerShell Remoting enabled and running
+Administrator PowerShell:
+```
+Enable-PSRemoting -SkipNetworkProfileCheck -Force
+```
+Also the client and server machines must either add the opposing added to the allowed host list.
+Check the list of trusted hosts:
+```
+Get-Item WSMan:\localhost\Client\TrustedHosts
+```
+Set Trusted Hosts:
+```
+Set-Item WSMan:\localhost\Client\TrustedHosts -Force -Value *
+```
+OR
+```
+Set-Item WSMan:\localhost\Client\TrustedHosts -Force -Concatenate -Value 192.168.10.100
+```
+
+Persistence WINRM
+```
+Set-Service WinRM -StartMode Automatic
+```
+Restart WinRM to apply changes
+```
+Restart-Service -Force WinRM
+```
+Enter-PSSession -ComputerName COMPUTERNAME1 -Credential Domain01\User01 
+```
+Or to run as Administrator (if you have that level of access)  
+```
+Enter-PSSession -ComputerName COMPUTERNAME1 -Credential Domain01\User01 -RunAsAdministrator
+```
+If you have a Local Administator Account that does NOT use AD to authenticate, you will need to use the following command:
+```
+Enter-PSSession -ComputerName COMPUTERNAME1 -Credential .\User01 -RunAsAdministrator -Authentication Negotiate
+```
+Often, unencrypted traffic is disabled and you will need to specify SSL information
+```
+Enter-PSSession -ComputerName COMPUTERNAME1 -Credential .\User01 -RunAsAdministrator -Authentication Negotiate -UseSSL
+```
+
+
+# REFERENCES:  
+*  https://blog.quickbreach.io/ps-remote-from-linux-to-windows/
+*  https://4sysops.com/archives/enable-powershell-remoting-on-a-standalone-workgroup-computer/
+*  
