@@ -5,7 +5,7 @@ Here I will document the various tools, methods and commands that can be used:
 
 ## PSEXEC
 
-PSEXEC allows for remote command execution or a remote shell.
+PSEXEC allows for remote command execution or a remote shell. PSEXEC uses ports 135 and 445 (TCP). Admin$ and IPC$ shares must also be enabled.
 
 Open a remote shell using PSEXEC
 ```
@@ -36,9 +36,61 @@ If you set the DWORD entry to 1, you will be able to connect to the admin share 
 
 ## WMI Remoting
 
+Windows Management Interface (WMI) is also an option that can be used for remote acccess into a machine.
+WMISploit is a PowerShell based tool which will allow use to use WMI as a remote shell.
+WMI Remoteing works over port TCP/135 (the standard port for RPC). 
+It also uses a randomly assigned port between 1024-65535(TCP) for Windows 2003 and older, and 49152 - 65535(TCP) 
+
+You can test if a remote machine has WMI enabled using the following PowerShell command:
+```
+Get-WmiObject -query "SELECT * FROM Win32_OperatingSystem" -ComputerName ComputerName 
+Get-WmiObject Win32_Service -Credential DOMAIN\USER -Computer Fabrikam
+```
+or Locally:
+```
+Get-WmiObject -query "SELECT * FROM Win32_OperatingSystem"
+```
+If it works you will see a result like this:
+```
+SystemDirectory : C:\Windows\system32
+Organization    :
+BuildNumber     : 17763
+RegisteredUser  : jsmith
+SerialNumber    : 00330-80000-00000-00000
+Version         : 10.0.17763
+```
+Otherwise you will get an error message
+
+
+```
+git clone https://github.com/secabstraction/WmiSploit
+Cloning into 'WmiSploit'...
+remote: Enumerating objects: 61, done.
+remote: Total 61 (delta 0), reused 0 (delta 0), pack-reused 61
+Unpacking objects: 100% (61/61), done.
+
+Import-Module .\Enter-WmiShell.ps1
+Import-Module .\Invoke-WmiCommand.ps1
+Import-Module .\Invoke-WmiShadowCopy.ps1
+Import-Module .\New-WmiSession.ps1
+```
+Open a remote shell using WMI
+```
+PS C:\> Enter-WmiShell -ComputerName Server01 -UserName Administrator
+```
+
+
+WMIImplant is another Powerful tool that can be leveraged in this situation:
+```
+git clone https://github.com/FortyNorthSecurity/WMImplant
+```
 
 ## PowerShell Remoting
 PowerShell only works if the remote machine already has PowerShell installed and if PowerShell remoting is configured to allow remote access. 
+PowerShell Remoting uses the following ports:  
+* TCP/5985 = HTTP  
+* TCP/5986 = HTTPS  
+  
 As opposed to that PsExec only requires network access to the machine and administrator privileges. No agents or preinstalled server applications are required. This is especially useful when dealing with older systems such as Windows Server 2003 and Windows Vista, which don't have PowerShell installed by default.
 If you need to access the operating system under the system account, PsExec is the simplest solution. A PowerShell session cannot run under a system account, unless I use PsExec for this purpose.
 
@@ -128,4 +180,4 @@ Enter-PSSession -ComputerName COMPUTERNAME1 -Credential .\User01 -RunAsAdministr
 # REFERENCES:  
 *  https://blog.quickbreach.io/ps-remote-from-linux-to-windows/
 *  https://4sysops.com/archives/enable-powershell-remoting-on-a-standalone-workgroup-computer/
-*  
+*  https://pentestlab.blog/2017/11/20/command-and-control-wmi/
