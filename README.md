@@ -92,6 +92,7 @@ Invoke-WMImplant
 To run WMImplant against a remote machine you can use the following Syntax:
 ```
 Invoke-WMImplant -ActiveUsers -ComputerName victim9 -RemoteUser .\Administrator -RemotePass badpass
+Invoke-WMImplant -BasicInfo -ComputerName victim9 -RemoteUser .\Administrator -RemotePass badpass
 ```
 Get a list of commands:
 ```
