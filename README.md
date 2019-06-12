@@ -5,6 +5,34 @@ Here I will document the various tools, methods and commands that can be used:
 
 ## PSEXEC
 
+PSEXEC allows for remote command execution or a remote shell.
+
+Open a remote shell using PSEXEC
+```
+psexec \\COMPUTER1 -u DOMAIN\User1 -p "PASSWORD" cmd
+```
+
+Trying to a access PSEXEC shell with the Local Admin will not work in most cases.
+```
+psexec \\COMPUTER1 -u .\Administrator -p "PASSWORD" cmd
+
+PsExec v2.2 - Execute processes remotely
+Copyright (C) 2001-2016 Mark Russinovich
+Sysinternals - www.sysinternals.com
+
+Couldn't access COMPUTER1:
+Access is denied.
+```
+
+Local Administrators cannot be used to remotely access the machine using PSEXEC.
+There is however a UAC flag in the registry that allows you to toggle this behavior for local accounts:
+
+HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\system\LocalAccountTokenFilterPolicy.  
+  
+   0 - build filtered token (Remote UAC enabled)  
+   1 - build elevated token (Remote UAC disabled)  
+  
+If you set the DWORD entry to 1, you will be able to connect to the admin share since the remote login is not filtered.  
 
 ## WMI Remoting
 
