@@ -193,14 +193,28 @@ Enter-PSSession -ComputerName COMPUTERNAME1 -Credential .\User01 -RunAsAdministr
 
 ## WinRM
 
-When the WinRM ports are open: HTTP (5985) or HTTPS SOAP (5986), you can perform WinRM remote commands if you have an administrator user on the remote machine.
+When the WinRM ports are open: HTTP (5985) or HTTPS SOAP (5986), you can perform WinRM remote commands if you have a user and password on the remote machine.
 Nmap will flag it as Microsoft-HTTPAPI/2.0:
 ```
 5985/tcp  open  http         Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
 |_http-server-header: Microsoft-HTTPAPI/2.0
 |_http-title: Not Found
 ```
-There is a metasploit module, which can be used to verify this:
+
+One of the more well known tools for gaining a remote shell using WinRM (HTTPAPI) is EvilWinRM:
+https://github.com/Hackplayers/evil-winrm
+```
+kali@kali:~/test$ sudo gem install evil-winrm
+kali@kali:~/test$ evil-winrm -i 10.10.10.1 -u test -p 'testpassword'
+
+Evil-WinRM shell v2.3
+
+Info: Establishing connection to remote endpoint
+
+*Evil-WinRM* PS C:\Users\test\Documents> k
+```
+
+There is also metasploit module, which can be used to verify this:
 scanner/winrm/winrm_cmd
 
 ```
@@ -231,7 +245,6 @@ Ethernet adapter Ethernet 1:
                                        10.10.10.255
 
 ```
-
 
 
 # REFERENCES:  
