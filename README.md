@@ -191,8 +191,51 @@ Often, unencrypted traffic is disabled and you will need to specify SSL informat
 Enter-PSSession -ComputerName COMPUTERNAME1 -Credential .\User01 -RunAsAdministrator -Authentication Negotiate -UseSSL
 ```
 
+## WinRM
+
+When the WinRM ports are open: HTTP (5985) or HTTPS SOAP (5986), you can perform WinRM remote commands if you have an administrator user on the remote machine.
+Nmap will flag it as Microsoft-HTTPAPI/2.0:
+```
+5985/tcp  open  http         Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-server-header: Microsoft-HTTPAPI/2.0
+|_http-title: Not Found
+```
+There is a metasploit module, which can be used to verify this:
+scanner/winrm/winrm_cmd
+
+```
+msf5 > use auxiliary/scanner/winrm/winrm_cmd
+msf5 auxiliary(scanner/winrm/winrm_cmd) > set RHOSTS 10.10.10.1
+RHOSTS => 10.10.10.161
+msf5 auxiliary(scanner/winrm/winrm_cmd) > set DOMAIN test
+DOMAIN => htb
+msf5 auxiliary(scanner/winrm/winrm_cmd) > set PASSWORD test
+PASSWORD => s3rvice
+msf5 auxiliary(scanner/winrm/winrm_cmd) > set USERNAME testuser
+USERNAME => svc-alfresco
+msf5 auxiliary(scanner/winrm/winrm_cmd) > run
+
+[+]
+Windows IP Configuration
+
+Ethernet adapter Ethernet 1:
+
+   Connection-specific DNS Suffix  . : test.test.com
+   IPv6 Address. . . . . . . . . . . : 2604:3d09:984:900::f8d8
+   IPv6 Address. . . . . . . . . . . : 2604:3d09:984:900:894b:5f1c:b45b:b8d
+   Temporary IPv6 Address. . . . . . : 2604:3d09:984:900:d5b:d696:be85:b303
+   Link-local IPv6 Address . . . . . : fe80::894b:5f1c:b45b:b8d%9
+   IPv4 Address. . . . . . . . . . . : 10.10.10.1
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Default Gateway . . . . . . . . . : fe80::3eb7:4bff:fe75:4bc5%9
+                                       10.10.10.255
+
+```
+
+
 
 # REFERENCES:  
 *  https://blog.quickbreach.io/ps-remote-from-linux-to-windows/
 *  https://4sysops.com/archives/enable-powershell-remoting-on-a-standalone-workgroup-computer/
 *  https://pentestlab.blog/2017/11/20/command-and-control-wmi/
+*  https://pentestlab.blog/2018/05/15/lateral-movement-winrm/
